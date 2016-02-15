@@ -59,6 +59,9 @@ bool RttTcpServer::work() {
         }
     }
 
+    close(clientSockFd);
+    close(sockFd);
+
     return true;
 }
 

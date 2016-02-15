@@ -61,7 +61,8 @@ bool RttTcpClient::work() {
         _sequenceNumber++;
         usleep(5*1000000);
     }
-
+    
+    close(sockFd);
     return true;
 }
 
