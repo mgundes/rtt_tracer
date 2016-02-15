@@ -2,7 +2,7 @@
 #include <cstring>
 #include "rtt/RttTcpServer.h"
 #include "rtt/RttTcpClient.h"
-
+#include <csignal>
 
 void usage()
 {
@@ -14,6 +14,9 @@ void usage()
 
 
 int main(int argc, char *argv[]) {
+
+    signal(SIGPIPE, SIG_IGN);
+
     if (argc == 3 && !strncmp(argv[1], "-s", strlen("-s"))) {
         RttTcpServer server(atoi(argv[2]));
         server.start();

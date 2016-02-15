@@ -8,6 +8,8 @@
 // Created by mgundes on 14.02.2016.
 //
 
+#include <cstdio>
+#include <cstdlib>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -16,6 +18,7 @@
 #include <string.h>
 #include "RttPayload.h"
 #include "../utils/TimeUtils.h"
+#include<arpa/inet.h> //inet_addr
 
 RttTcpClient::RttTcpClient(std::string ipAddr, int port)
         : _ipAddr(ipAddr), _port(port), _sequenceNumber(1)
@@ -45,11 +48,13 @@ bool RttTcpClient::work() {
     struct sockaddr_in serverAddr = {0};
     serverAddr.sin_family = AF_INET;
 
-    strncpy(server->h_addr, (char *) &serverAddr.sin_addr.s_addr, server->h_length);
+    //strncpy(server->h_addr, (char *) &serverAddr.sin_addr.s_addr, server->h_length);
+    serverAddr.sin_addr.s_addr = inet_addr(_ipAddr.c_str());
     serverAddr.sin_port = htons(_port);
 
     if (connect(sockFd, (struct sockaddr *) &serverAddr, sizeof(serverAddr)) < 0) {
-        std::cerr << "Error on connect!" << std::endl;
+        std::cerr << "Error on connect! " << std::endl;
+        perror("Connect error: ");
         return false;
     }
 
@@ -59,7 +64,7 @@ bool RttTcpClient::work() {
             break;
         }
         _sequenceNumber++;
-        usleep(5*1000000);
+        usleep(1*1000000);
     }
     
     close(sockFd);
@@ -73,7 +78,7 @@ bool RttTcpClient::sendRequestReadResponse(int socketFd)
         std::cerr << "Error on sending payload!" << std::endl;
         return false;
     }
-    std::cout << "Sent seq " << sendPayload.getSequenceNumber() << ", time(ms) " << sendPayload.getTimeInMS() << std::endl;
+    //std::cout << "Sent seq " << sendPayload.getSequenceNumber() << ", time(ms) " << sendPayload.getTimeInMS() << std::endl;
 
     RttPayload readPayload;
     if (read(socketFd, &readPayload, sizeof(readPayload)) < 0) {
@@ -81,12 +86,15 @@ bool RttTcpClient::sendRequestReadResponse(int socketFd)
         return false;
     }
 
-    std::cout << "Received seq " << readPayload.getSequenceNumber() << ", time(ms) " << readPayload.getTimeInMS() << std::endl;
+    long currentTimeMs = TimeUtils::getSystemTimeInMilliseconds();
+
+    //std::cout << "Received seq " << readPayload.getSequenceNumber() << ", time(ms) " << readPayload.getTimeInMS() << std::endl;
 
     if (readPayload.getSequenceNumber() == sendPayload.getSequenceNumber() &&
         readPayload.getTimeInMS() == sendPayload.getTimeInMS()) {
-        std::cout << "Network delay/jitter for msg " << readPayload.getSequenceNumber() << ": "
-        << (TimeUtils::getSystemTimeInMilliseconds() - readPayload.getTimeInMS()) << " ms" << std::endl;
+        std::cout << TimeUtils::getLocalTime() << "Network delay/jitter for msg " << readPayload.getSequenceNumber() << ": "
+        << "(" << currentTimeMs << " - " << readPayload.getTimeInMS() << ") " <<
+                (TimeUtils::getSystemTimeInMilliseconds() - readPayload.getTimeInMS()) << " ms" << std::endl;
     } else {
         std::cerr << "Error on send and received sequence number!" << std::endl;
         return false;

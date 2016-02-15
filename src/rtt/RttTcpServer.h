@@ -13,11 +13,14 @@ public:
     RttTcpServer(int port);
     ~RttTcpServer() {}
     void start();
+    void stop(int arg);
 
 private:
     bool work();
     bool readRequestSendResponse(int clientSocketFd);
+    bool handleClientConnection(int serverSockFd);
     int _port;
+    bool _threadActive;
 };
 
 

@@ -11,16 +11,24 @@
 #include "RttPayload.h"
 
 RttTcpServer::RttTcpServer(int port)
-    : _port(port)
+    : _port(port), _threadActive(false)
 {
 }
 
 void RttTcpServer::start()
 {
-    while (true) {
+    _threadActive = true;
+    while (_threadActive) {
         std::cout << "Running in Server Mode, listen port " << _port << std::endl;
         work();
+        usleep(2*1000000);
     }
+}
+
+void RttTcpServer::stop(int arg)
+{
+    std::cout << "Stop server.." << std::endl;
+    _threadActive = false;
 }
 
 bool RttTcpServer::work() {
@@ -42,9 +50,20 @@ bool RttTcpServer::work() {
 
     listen(sockFd, 1);
 
+    while(_threadActive) {
+        std::cout << "Waiting new connection.." << std::endl;
+        handleClientConnection(sockFd);
+    }
+
+    close(sockFd);
+
+    return true;
+}
+
+bool RttTcpServer::handleClientConnection(int serverSockFd) {
     struct sockaddr_in clientAddr = {0};
     unsigned int clientAddrLen = sizeof(clientAddr);
-    int clientSockFd = accept(sockFd, (struct sockaddr *) &clientAddr, &clientAddrLen);
+    int clientSockFd = accept(serverSockFd, (struct sockaddr *) &clientAddr, &clientAddrLen);
     if (clientSockFd <0) {
         std::cerr << "Error on client accept!" << std::endl;
         return false;
@@ -53,15 +72,14 @@ bool RttTcpServer::work() {
     std::cout << "Got connection from " << inet_ntoa(clientAddr.sin_addr) << std::endl;
 
     bool isClientConnected = true;
-    while(isClientConnected) {
+    while(isClientConnected && _threadActive) {
         if (!readRequestSendResponse(clientSockFd)) {
+            std::cerr << "Error on client read/send!" << std::endl;
             break;
         }
     }
 
     close(clientSockFd);
-    close(sockFd);
-
     return true;
 }
 
