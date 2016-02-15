@@ -7,10 +7,12 @@
 
 
 #include <chrono>
+#include <string>
 
 class TimeUtils {
 public:
     static long getSystemTimeInMilliseconds();
+    static std::string getLocalTime();
 
 };
 
