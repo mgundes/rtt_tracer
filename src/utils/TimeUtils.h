@@ -13,6 +13,7 @@ class TimeUtils {
 public:
     static long getSystemTimeInMilliseconds();
     static std::string getLocalTime();
+    static std::string getDateAsLogFileName();
 
 };
 
