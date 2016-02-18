@@ -23,3 +23,6 @@ all:
 	g++ $(CFLAGS) $(INCLUDES) $(SRC) -o $(PROJECT)
 
 
+clean:
+	find -iname "*.o" | xargs rm -f
+	rm -f $(PROJET)
