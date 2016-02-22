@@ -24,7 +24,7 @@ std::string TimeUtils::getLocalTime()
     return std::string(buffer);
 }
 
-std::string TimeUtils::getDateAsLogFileName()
+std::string TimeUtils::getLogFileNameAsDate()
 {
     time_t rawTime;
     struct tm * timeinfo;
@@ -34,5 +34,5 @@ std::string TimeUtils::getDateAsLogFileName()
     char buffer [80] = {0};
     strftime(buffer,80,"%d%m%Y",timeinfo);
 
-    return std::string(buffer);
+    return std::string(buffer) + ".log";
 }

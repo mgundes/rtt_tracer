@@ -20,7 +20,7 @@ Logger::~Logger()
 
 bool Logger::init()
 {
-    logFileStream.open(TimeUtils::getDateAsLogFileName() + ".log", std::ofstream::out | std::ofstream::app);
+    logFileStream.open(TimeUtils::getLogFileNameAsDate(), std::ofstream::out | std::ofstream::app);
     return logFileStream.is_open();
 }
 
