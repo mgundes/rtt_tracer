@@ -1,4 +1,3 @@
-
 PROJECT=rtt_tracer
 
 CFLAGS = -static -std=c++0x

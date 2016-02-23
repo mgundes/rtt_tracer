@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
         std::cerr << "Logger init failed! Exiting.." << std::endl;
         exit(EXIT_FAILURE);
     }
-    printf("aliveli");
+
     if (argc == 3 && !strncmp(argv[1], "-s", strlen("-s"))) {
         RttTcpServer server(atoi(argv[2]));
         server.start();
@@ -31,6 +31,5 @@ int main(int argc, char *argv[]) {
     }
 
     usage();
-    printf("hey");
     Logger::deInit();
 }
