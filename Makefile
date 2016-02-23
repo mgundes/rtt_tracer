@@ -25,4 +25,4 @@ all:
 
 clean:
 	find -iname "*.o" | xargs rm -f
-	rm -f $(PROJET)
+	rm -f $(PROJECT)
