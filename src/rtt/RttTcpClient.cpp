@@ -76,7 +76,7 @@ bool RttTcpClient::sendRequestReadResponse(int socketFd)
         LOG_ERROR << "Error on sending payload!" << std::endl;
         return false;
     }
-    LOG_DEBUG << "Sent seq " << sendPayload.getSequenceNumber() << ", time(ms) " << sendPayload.getTimeInMS() << std::endl;
+    LOG_DEBUG << "Sent seq " << sendPayload.getSequenceNumber() << ", local time(ms) " << sendPayload.getLocalTimeInMS() << std::endl;
 
     RttPayload readPayload;
     if (read(socketFd, &readPayload, sizeof(readPayload)) < 0) {
@@ -85,18 +85,16 @@ bool RttTcpClient::sendRequestReadResponse(int socketFd)
     }
 
     long currentTimeMs = TimeUtils::getSystemTimeInMilliseconds();
-
-    LOG_DEBUG << "Received seq " << readPayload.getSequenceNumber() << ", time(ms) " << readPayload.getTimeInMS() << std::endl;
+    long netWorkDelayMs = currentTimeMs - sendPayload.getLocalTimeInMS();
+    long timeDiffMs = currentTimeMs - readPayload.getLocalTimeInMS() - (netWorkDelayMs/2);
 
     if (readPayload.getSequenceNumber() == sendPayload.getSequenceNumber() &&
-        readPayload.getTimeInMS() == sendPayload.getTimeInMS()) {
-        LOG_INFO << TimeUtils::getLocalTime() << "Network delay/jitter for msg " << readPayload.getSequenceNumber() << ": "
-        << "(" << currentTimeMs << " - " << readPayload.getTimeInMS() << ") " <<
-                (TimeUtils::getSystemTimeInMilliseconds() - readPayload.getTimeInMS()) << " ms" << std::endl;
-    } else {
-        LOG_ERROR << "Error on send and received sequence number!" << std::endl;
-        return false;
+        readPayload.getRemoteTimeInMS() == sendPayload.getLocalTimeInMS())
+    {
+        LOG_INFO << "Msg " << readPayload.getSequenceNumber() << ", Network Delay " << netWorkDelayMs << ", Time Diff " << timeDiffMs << " miliseonds." << std::endl;
+        return true;
     }
 
-    return true;
+    LOG_ERROR << "Error on send and received sequence number!" << std::endl;
+    return false;
 }

@@ -10,6 +10,7 @@
 #include "RttTcpServer.h"
 #include "RttPayload.h"
 #include "../utils/Logger.h"
+#include "../utils/TimeUtils.h"
 
 RttTcpServer::RttTcpServer(int port)
     : _port(port), _threadActive(false)
@@ -92,8 +93,10 @@ bool RttTcpServer::readRequestSendResponse(int clientSocketFd) {
         return false;
     }
 
-    LOG_INFO << "Read: sequence number: " << payload.getSequenceNumber() << ", time milliseconds: " << payload.getTimeInMS() << std::endl;
+    LOG_INFO << "Read: sequence number: " << payload.getSequenceNumber() << ", time milliseconds: " << payload.getLocalTimeInMS() << std::endl;
     payload.setSequenceNumber(payload.getSequenceNumber());
+    payload.setRemoteTimeInMS(payload.getLocalTimeInMS());
+    payload.setLocalTimeInMS(TimeUtils::getSystemTimeInMilliseconds());
 
     int sentBytes = send(clientSocketFd, &payload, sizeof(payload), 0);
     if (sentBytes < 0) {

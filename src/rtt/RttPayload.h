@@ -20,16 +20,25 @@ public:
         RttPayload::_sequenceNumber = sequenceNumber;
     }
 
-    long getTimeInMS() const {
-        return _timeInMS;
+    long getLocalTimeInMS() const {
+        return _localTimeInMS;
     }
 
-    void setTimeInMS(long timeInMS) {
-        RttPayload::_timeInMS = timeInMS;
+    long getRemoteTimeInMS() const {
+        return _remoteTimeInMS;
+    }
+
+    void setLocalTimeInMS(long timeInMS) {
+        RttPayload::_localTimeInMS = timeInMS;
+    }
+
+    void setRemoteTimeInMS(long timeInMS) {
+        RttPayload::_remoteTimeInMS = timeInMS;
     }
 
 private:
-    long _timeInMS;
+    long _localTimeInMS;
+    long _remoteTimeInMS;
     long _sequenceNumber;
 };
 

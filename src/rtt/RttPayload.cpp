@@ -6,13 +6,13 @@
 #include "../utils/TimeUtils.h"
 
 RttPayload::RttPayload(long sequenceNumber)
-    : _sequenceNumber(sequenceNumber)
+    : _sequenceNumber(sequenceNumber), _remoteTimeInMS(0)
 {
-    _timeInMS = TimeUtils::getSystemTimeInMilliseconds();
+    _localTimeInMS = TimeUtils::getSystemTimeInMilliseconds();
 }
 
 RttPayload::RttPayload()
-    : _sequenceNumber(0), _timeInMS(0)
+    : _sequenceNumber(0), _localTimeInMS(0), _remoteTimeInMS(0)
 {
 
 }
