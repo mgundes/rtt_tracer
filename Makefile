@@ -1,6 +1,7 @@
 PROJECT=rtt_tracer
 
 CFLAGS = -std=c++0x # -static cause runtime problem somehow
+#CFLAGS += -DLOG2CONSOLE
 LDFLAGS = -pthread
 
 

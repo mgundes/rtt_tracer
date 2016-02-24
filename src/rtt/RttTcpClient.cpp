@@ -45,8 +45,6 @@ bool RttTcpClient::work() {
 
     struct sockaddr_in serverAddr = {0};
     serverAddr.sin_family = AF_INET;
-
-    //strncpy(server->h_addr, (char *) &serverAddr.sin_addr.s_addr, server->h_length);
     serverAddr.sin_addr.s_addr = inet_addr(_ipAddr.c_str());
     serverAddr.sin_port = htons(_port);
 

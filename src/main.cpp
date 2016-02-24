@@ -30,6 +30,5 @@ int main(int argc, char *argv[]) {
         client.start();
     }
 
-    usage();
     Logger::deInit();
 }
