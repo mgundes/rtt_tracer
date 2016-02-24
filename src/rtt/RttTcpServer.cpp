@@ -94,7 +94,7 @@ bool RttTcpServer::readRequestSendResponse(int clientSocketFd) {
         return false;
     }
 
-    LOG_INFO << "Read: sequence number: " << payload.getSequenceNumber() << ", time milliseconds: " << payload.getLocalTimeInMS() << std::endl;
+    //LOG_INFO << "Read: sequence number: " << payload.getSequenceNumber() << ", time milliseconds: " << payload.getLocalTimeInMS() << std::endl;
     payload.setSequenceNumber(payload.getSequenceNumber());
     payload.setRemoteTimeInMS(payload.getLocalTimeInMS());
     payload.setLocalTimeInMS(TimeUtils::getSystemTimeInMilliseconds());
