@@ -17,8 +17,8 @@ public:
 
 private:
     bool work();
-    bool readRequestSendResponse(int clientSocketFd);
-    bool handleClientConnection(int serverSockFd);
+    static bool handleClientConnection(int clientSockFd, struct sockaddr_in clientAddr);
+    static bool readRequestSendResponse(int clientSocketFd);
     int _port;
     bool _threadActive;
 };

@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
+#include <thread>
 #include "RttTcpServer.h"
 #include "RttPayload.h"
 #include "../utils/Logger.h"
@@ -54,7 +55,14 @@ bool RttTcpServer::work() {
 
     while(_threadActive) {
         LOG_INFO << "Waiting new connection.." << std::endl;
-        handleClientConnection(sockFd);
+        struct sockaddr_in clientAddr = {0};
+        unsigned int clientAddrLen = sizeof(clientAddr);
+        int clientSockFd = accept(sockFd, (struct sockaddr *) &clientAddr, &clientAddrLen);
+        std::thread connHandlerThread(&(RttTcpServer::handleClientConnection), clientSockFd, clientAddr);
+        if (connHandlerThread.joinable()) {
+            LOG_DEBUG << "Detaching thread " << connHandlerThread.get_id() << std::endl;
+            connHandlerThread.detach();
+        }
     }
 
     close(sockFd);
@@ -62,25 +70,18 @@ bool RttTcpServer::work() {
     return true;
 }
 
-bool RttTcpServer::handleClientConnection(int serverSockFd) {
-    struct sockaddr_in clientAddr = {0};
-    unsigned int clientAddrLen = sizeof(clientAddr);
-    int clientSockFd = accept(serverSockFd, (struct sockaddr *) &clientAddr, &clientAddrLen);
-    if (clientSockFd <0) {
-        LOG_ERROR << "Error on client accept!" << std::endl;
-        return false;
-    }
-
-    LOG_INFO << "Got connection from " << inet_ntoa(clientAddr.sin_addr) << std::endl;
-
+bool RttTcpServer::handleClientConnection(int clientSockFd, struct sockaddr_in clientAddr) {
+    LOG_INFO << "Got connection from " << inet_ntoa(clientAddr.sin_addr) << ":" << clientAddr.sin_port << std::endl;
     bool isClientConnected = true;
-    while(isClientConnected && _threadActive) {
+
+    while(isClientConnected) {
         if (!readRequestSendResponse(clientSockFd)) {
             LOG_ERROR << "Error on client read/send!" << std::endl;
             break;
         }
     }
 
+    LOG_INFO << "close connection from " << inet_ntoa(clientAddr.sin_addr) << std::endl;
     close(clientSockFd);
     return true;
 }
