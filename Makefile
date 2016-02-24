@@ -1,6 +1,7 @@
 PROJECT=rtt_tracer
 
-CFLAGS = -static -std=c++0x
+CFLAGS = -std=c++0x # -static cause runtime problem somehow
+LDFLAGS = -pthread
 
 
 SRC = src/main.cpp \
@@ -20,7 +21,7 @@ SRC = src/main.cpp \
 INCLUDES = -I src/rtt/ -I src/utils/
 
 all:
-	g++ $(CFLAGS) $(INCLUDES) $(SRC) -o $(PROJECT)
+	g++ $(CFLAGS) $(LDFLAGS) $(INCLUDES) $(SRC) -o $(PROJECT)
 
 
 clean:
