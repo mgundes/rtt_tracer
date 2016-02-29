@@ -4,10 +4,23 @@
 #include "rtt/RttTcpClient.h"
 #include "utils/Logger.h"
 #include <csignal>
+#include <boost/program_options.hpp>
 
 #ifndef RTT_TRACER_VERSION
 #define RTT_TRACER_VERSION "0.1"
 #endif
+
+namespace po = boost::program_options;
+
+void parse()
+{
+    po::options_description desc("Rtt Tracer Options");
+    desc.add_options()
+            ("server", "run as server")
+            ("client", "run as client")
+            ("port", po::value<int>()->default_value(5600), "port")
+            ("ip", po::value<std::string>()->default_value("127.0.0.1"), "client connect ip");
+}
 
 void usage()
 {
