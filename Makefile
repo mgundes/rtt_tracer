@@ -13,10 +13,15 @@ SRC = src/main.cpp \
     src/rtt/RttUDP.h \
     src/utils/Logger.cpp \
     src/utils/Logger.h \
+    src/utils/LogManager.cpp \
+    src/utils/LogManager.h \
+    src/utils/easylogging++.h \
     src/rtt/RttPayload.cpp \
     src/rtt/RttPayload.h \
     src/utils/TimeUtils.cpp \
     src/utils/TimeUtils.h \
+    src/utils/Utils.h \
+    src/utils/Utils.cpp \
     src/rtt/RttTcpClient.cpp \
     src/rtt/RttTcpClient.h
 

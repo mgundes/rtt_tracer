@@ -3,7 +3,7 @@
 //
 
 #include "RttTcpClient.h"
-#include "../utils/Logger.h"
+#include "LogManager.h"
 
 //
 // Created by mgundes on 14.02.2016.
@@ -26,20 +26,20 @@ RttTcpClient::RttTcpClient(std::string ipAddr, int port)
 
 void RttTcpClient::start()
 {
-    LOG_INFO << "Running in Client Mode, connect to " << _ipAddr << ":" << _port << std::endl;
+    LOG(INFO) << "Running in Client Mode, connect to " << _ipAddr << ":" << _port << std::endl;
     work();
 }
 
 bool RttTcpClient::work() {
     int sockFd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockFd < 0) {
-        LOG_ERROR << "Error on socket create!" << std::endl;
+        LOG(ERROR) << "Error on socket create!" << std::endl;
         return false;
     }
 
     struct hostent* server = gethostbyname(_ipAddr.c_str());
     if (!server) {
-        LOG_ERROR << "Error regarding server ip!" << std::endl;
+        LOG(ERROR) << "Error regarding server ip!" << std::endl;
         return false;
     }
 
@@ -49,14 +49,14 @@ bool RttTcpClient::work() {
     serverAddr.sin_port = htons(_port);
 
     if (connect(sockFd, (struct sockaddr *) &serverAddr, sizeof(serverAddr)) < 0) {
-        LOG_ERROR << "Error on connect! " << std::endl;
+        LOG(ERROR) << "Error on connect! " << std::endl;
         perror("Connect error: ");
         return false;
     }
 
     while(true) {
         if (!sendRequestReadResponse(sockFd)) {
-            LOG_ERROR << "Error, exiting.." << std::endl;
+            LOG(ERROR) << "Error, exiting.." << std::endl;
             break;
         }
         _sequenceNumber++;
@@ -71,14 +71,14 @@ bool RttTcpClient::sendRequestReadResponse(int socketFd)
 {
     RttPayload sendPayload(_sequenceNumber);
     if (send(socketFd, &sendPayload, sizeof(sendPayload), 0) < 0) {
-        LOG_ERROR << "Error on sending payload!" << std::endl;
+        LOG(ERROR) << "Error on sending payload!" << std::endl;
         return false;
     }
-    LOG_DEBUG << "Sent seq " << sendPayload.getSequenceNumber() << ", local time(ms) " << sendPayload.getLocalTimeInMS() << std::endl;
+    LOG(DEBUG) << "Sent seq " << sendPayload.getSequenceNumber() << ", local time(ms) " << sendPayload.getLocalTimeInMS() << std::endl;
 
     RttPayload readPayload;
     if (read(socketFd, &readPayload, sizeof(readPayload)) < 0) {
-        LOG_ERROR << "Error on reading payload!" << std::endl;
+        LOG(ERROR) << "Error on reading payload!" << std::endl;
         return false;
     }
 
@@ -89,10 +89,10 @@ bool RttTcpClient::sendRequestReadResponse(int socketFd)
     if (readPayload.getSequenceNumber() == sendPayload.getSequenceNumber() &&
         readPayload.getRemoteTimeInMS() == sendPayload.getLocalTimeInMS())
     {
-        LOG_INFO << "Msg " << readPayload.getSequenceNumber() << ", Network Delay " << netWorkDelayMs << ", Time Diff " << timeDiffMs << " miliseonds." << std::endl;
+        LOG(INFO) << "Msg " << readPayload.getSequenceNumber() << ", Network Delay " << netWorkDelayMs << ", Time Diff " << timeDiffMs << " miliseonds." << std::endl;
         return true;
     }
 
-    LOG_ERROR << "Error on send and received sequence number!" << std::endl;
+    LOG(ERROR) << "Error on send and received sequence number!" << std::endl;
     return false;
 }

@@ -30,6 +30,7 @@ private:
     static std::ofstream logFileStream;
 };
 
+
 #define LOG_CRITICAL  Logger().getStream(__FUNCTION__, Logger::LOG_LEVEL_CRITICAL)
 #define LOG_ERROR     Logger().getStream(__FUNCTION__, Logger::LOG_LEVEL_ERROR)
 #define LOG_WARNING   Logger().getStream(__FUNCTION__, Logger::LOG_LEVEL_WARNING)
