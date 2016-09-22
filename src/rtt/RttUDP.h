@@ -7,7 +7,7 @@
 
 
 class RttUDP {
-
+public:
 };
 
 

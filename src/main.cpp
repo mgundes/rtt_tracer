@@ -2,7 +2,6 @@
 #include <cstring>
 #include "rtt/RttTcpServer.h"
 #include "rtt/RttTcpClient.h"
-#include "utils/Logger.h"
 #include <csignal>
 #include "LogManager.h"
 

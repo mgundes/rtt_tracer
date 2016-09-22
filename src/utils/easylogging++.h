@@ -4454,7 +4454,8 @@ public:
         if (logFormat->hasFlag(base::FormatFlags::Line)) {
             // Line
             char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceLineMaxLength);
-            buf = base::utils::Str::convertAndAddToBuff(logMessage->line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
+            // buf = base::utils::Str::convertAndAddToBuff(logMessage->line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
+            base::utils::Str::convertAndAddToBuff(logMessage->line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, std::string(buff));
         }
         if (logFormat->hasFlag(base::FormatFlags::Location)) {
@@ -4463,13 +4464,16 @@ public:
             base::utils::File::buildStrippedFilename(logMessage->file().c_str(), buff);
             buf = base::utils::Str::addToBuff(buff, buf, bufLim);
             buf = base::utils::Str::addToBuff(":", buf, bufLim);
-            buf = base::utils::Str::convertAndAddToBuff(logMessage->line(),  base::consts::kSourceLineMaxLength, buf, bufLim, false);
+            // buf = base::utils::Str::convertAndAddToBuff(logMessage->line(),  base::consts::kSourceLineMaxLength, buf, bufLim, false);
+            base::utils::Str::convertAndAddToBuff(logMessage->line(),  base::consts::kSourceLineMaxLength, buf, bufLim, false);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, std::string(buff));
         }
         if (logMessage->level() == Level::Verbose && logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
             // Verbose level
             char* buf = base::utils::Str::clearBuff(buff, 1);
-            buf = base::utils::Str::convertAndAddToBuff(logMessage->verboseLevel(), 1, buf, bufLim, false);
+            // unused variable
+            // buf = base::utils::Str::convertAndAddToBuff(logMessage->verboseLevel(), 1, buf, bufLim, false);
+            base::utils::Str::convertAndAddToBuff(logMessage->verboseLevel(), 1, buf, bufLim, false);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, std::string(buff));
         }
         if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
