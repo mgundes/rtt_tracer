@@ -1,8 +1,8 @@
 PROJECT=rtt_tracer
 
-CC = gcc
+CC = g++
 CFLAGS = -std=c++11
-#CFLAGS += -DLOG2CONSOLE
+CFLAGS += -DLOG2CONSOLE
 CFLAGS += -DRTT_TRACER_VERSION=\"0.2\"
 LDFLAGS = -pthread
 
