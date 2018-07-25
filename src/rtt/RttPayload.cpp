@@ -8,7 +8,7 @@
 RttPayload::RttPayload(long sequenceNumber)
     : _sequenceNumber(sequenceNumber), _remoteTimeInMS(0)
 {
-    _localTimeInMS = TimeUtils::getSystemTimeInMilliseconds();
+    _localTimeInMS = TimeUtils::GetCurrentTimeStampMilliSecond();
 }
 
 RttPayload::RttPayload()

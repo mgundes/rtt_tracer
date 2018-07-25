@@ -82,14 +82,17 @@ bool RttTcpClient::sendRequestReadResponse(int socketFd)
         return false;
     }
 
-    long currentTimeMs = TimeUtils::getSystemTimeInMilliseconds();
-    long netWorkDelayMs = currentTimeMs - sendPayload.getLocalTimeInMS();
-    long timeDiffMs = currentTimeMs - readPayload.getLocalTimeInMS() - (netWorkDelayMs/2);
+    long currentTimeMs = TimeUtils::GetCurrentTimeStampMilliSecond();
+    long rttDurationMs = currentTimeMs - sendPayload.getLocalTimeInMS();
+    long serverReceiveDuration = readPayload.getLocalTimeInMS() - sendPayload.getLocalTimeInMS();
+    long clientReceiveDuration = currentTimeMs - readPayload.getLocalTimeInMS();
 
     if (readPayload.getSequenceNumber() == sendPayload.getSequenceNumber() &&
         readPayload.getRemoteTimeInMS() == sendPayload.getLocalTimeInMS())
     {
-        LOG(INFO) << "Msg " << readPayload.getSequenceNumber() << ", Network Delay " << netWorkDelayMs << ", Time Diff " << timeDiffMs << " miliseonds." << std::endl;
+        LOG(INFO) << "Msg " << readPayload.getSequenceNumber() << ", RTT: " << rttDurationMs
+                  << ", TransmitDuration: " << serverReceiveDuration
+                  << ", ReceiveDuration: " << clientReceiveDuration << std::endl;
         return true;
     }
 
